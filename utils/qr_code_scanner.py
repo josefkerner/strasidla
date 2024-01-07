@@ -1,5 +1,4 @@
 import streamlit as st
-from data_model.patrol import Patrol
 from utils.connector.google_sheet_connector import GoogleSheetConnector
 from datetime import datetime
 import cv2
@@ -65,18 +64,7 @@ class QRCodeScanner:
                 self.session.commit()
             #reset streamlit screen
             placeholder.empty()
-    def check_qr_code(self,qr_code:str) -> Patrol:
-        '''
-        Will check QR code
-        :param qr_code:
-        :return:
-        '''
-        ex_patrol = self.session.query(Patrol).where(
-            Patrol.qr_code == qr_code).first()
 
-        if ex_patrol == None:
-            return None
-        return ex_patrol
 
 if __name__ == "__main__":
     QRCodeScanner().run_scanner()
