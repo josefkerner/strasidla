@@ -13,6 +13,9 @@ class QRCodeScanner:
 
     def write_time(self, data):
         try:
+            if not str(data).startswith("StrasidlaHlidka:"):
+                st.write("Naskenovany kod neni spravny, zkus to znovu")
+                return
             index = str(data).replace("StrasidlaHlidka:", "")
             # keep only number in index - use regex /d
             regex = re.compile(r'\d+')
