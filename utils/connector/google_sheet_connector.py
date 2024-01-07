@@ -20,8 +20,7 @@ class GoogleSheetConnector:
         df['time'] = [time]
         sh = self.gc.open('strasidla')
         wks = sh[0]
-        wks.update_value(addr=f'B{index}', val=time)
-        wks.set_dataframe(df, (2, index))
+        wks.update_value(addr=f'B{index+1}', val=time)
 
     def get_records(self,sheet_instance):
         records_data = sheet_instance.get_all_records()

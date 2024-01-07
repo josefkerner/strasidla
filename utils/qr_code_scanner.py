@@ -12,6 +12,21 @@ class QRCodeScanner:
         self.sheet_connector = GoogleSheetConnector()
         self.qreader = QReader()
 
+    def write_time(self, data):
+        try:
+            index = str(data).replace("StrasidlaHlidka:", "")
+            # keep only number in index - use regex /d
+            regex = re.compile(r'\d+')
+            index = regex.findall(index)[0]
+
+            current_time = datetime.now().strftime("%H:%M:%S")
+            self.sheet_connector.write_time(current_time, int(index))
+            st.write(f"Cas dobehnuti: {current_time}")
+        except Exception as e:
+            st.write("Neco se pokazilo, zkus to znovu")
+            st.write(e)
+
+
     def set_screener(self):
         # Create a QReader instance
         image = st.camera_input("Show QR code")
@@ -31,14 +46,8 @@ class QRCodeScanner:
 
             st.write(data)
             if data is not None:
-                index = str(data).replace("StrasidlaHlidka:", "")
-                #keep only number in index - use regex /d
-                regex = re.compile(r'\d+')
-                index = regex.findall(index)[0]
+                self.write_time(data)
 
-                current_time = datetime.now().strftime("%H:%M:%S")
-                self.sheet_connector.write_time(current_time, int(index))
-                st.write(f"Cas dobehnuti: {current_time}")
             os.remove("image.png")
     def run_scanner(self):
         placeholder = st.empty()
@@ -56,9 +65,6 @@ class QRCodeScanner:
                 self.session.commit()
             #reset streamlit screen
             placeholder.empty()
-
-
-
     def check_qr_code(self,qr_code:str) -> Patrol:
         '''
         Will check QR code
