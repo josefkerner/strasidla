@@ -2,14 +2,16 @@ import streamlit as st
 from utils.connector.google_sheet_connector import GoogleSheetConnector
 from datetime import datetime
 import cv2
-import numpy as np
-from qreader import QReader
-import cv2
 import os, re
+
+import streamlit as st
+from streamlit_qrcode_scanner import qrcode_scanner
+
+qr_code = qrcode_scanner(key='qrcode_scanner')
 class QRCodeScanner:
     def __init__(self):
         self.sheet_connector = GoogleSheetConnector()
-        self.qreader = QReader()
+        #self.qreader = QReader()
 
     def write_time(self, data):
         try:
@@ -32,25 +34,38 @@ class QRCodeScanner:
     def set_screener(self):
         # Create a QReader instance
         image = st.camera_input("Show QR code")
-        if image is not None:
-            bytes_data = image.getvalue()
-            #save image
-            with open('image.png', 'wb') as f:
-                f.write(bytes_data)
-            image = cv2.cvtColor(cv2.imread("image.png"), cv2.COLOR_BGR2RGB)
-            data = self.qreader.detect_and_decode(image=image)
-            #cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
-            #detector = cv2.QRCodeDetector()
-            #data, bbox, straight_qrcode = detector.detectAndDecode(cv2_img)
-            st.write("Naskenovaná hlídka:")
-            #remove image
+
+        cap = cv2.VideoCapture(0)
+        decoder = cv2.QRCodeDetector()
+
+        while True:
+            _, img = cap.read()
+            data, bbox, _ = detector.detectAndDecode(img)
+            # check if there is a QRCode in the image
+            if data:
+                a = data
+
+                '''
+                bytes_data = image.getvalue()
+                #save image
+                with open('image.png', 'wb') as f:
+                    f.write(bytes_data)
+                image = cv2.cvtColor(cv2.imread("image.png"), cv2.COLOR_BGR2RGB)
+                data = self.qreader.detect_and_decode(image=image)
+                
+                #cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
+                #detector = cv2.QRCodeDetector()
+                #data, bbox, straight_qrcode = detector.detectAndDecode(cv2_img)
+                '''
+                st.write("Naskenovaná hlídka:")
+                #remove image
 
 
-            st.write(data)
-            if data is not None:
-                self.write_time(data)
+                st.write(data)
+                if data is not None:
+                    self.write_time(data)
 
-            os.remove("image.png")
+                #os.remove("image.png")
     def run_scanner(self):
         placeholder = st.empty()
 
