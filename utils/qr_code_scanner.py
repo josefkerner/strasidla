@@ -5,9 +5,7 @@ import cv2
 import os, re
 
 import streamlit as st
-from streamlit_qrcode_scanner import qrcode_scanner
 
-qr_code = qrcode_scanner(key='qrcode_scanner')
 class QRCodeScanner:
     def __init__(self):
         self.sheet_connector = GoogleSheetConnector()
@@ -40,10 +38,9 @@ class QRCodeScanner:
 
         while True:
             _, img = cap.read()
-            data, bbox, _ = detector.detectAndDecode(img)
+            data, bbox, _ = decoder.detectAndDecode(img)
             # check if there is a QRCode in the image
             if data:
-                a = data
 
                 '''
                 bytes_data = image.getvalue()
@@ -62,8 +59,7 @@ class QRCodeScanner:
 
 
                 st.write(data)
-                if data is not None:
-                    self.write_time(data)
+                self.write_time(data)
 
                 #os.remove("image.png")
     def run_scanner(self):
