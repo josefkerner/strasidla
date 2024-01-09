@@ -2,7 +2,7 @@ from google_sheet_connector import GoogleSheetConnector
 from datetime import datetime
 import cv2
 import re
-
+import os
 import streamlit as st
 
 class QRCodeScanner:
@@ -27,47 +27,70 @@ class QRCodeScanner:
             st.write("Neco se pokazilo, zkus to znovu")
             st.write(e)
 
-
-    def set_screener(self):
-        # Create a QReader instance
-        image = st.camera_input("Show QR code")
-
-        cap = cv2.VideoCapture(0)
+    def scan_qr_code(self):
         decoder = cv2.QRCodeDetector()
-
+        cap = cv2.VideoCapture(0)
         while True:
             _, img = cap.read()
             if img is None:
                 continue
-            data, bbox, _ = decoder.detectAndDecode(img)
-            # check if there is a QRCode in the image
-            if data:
-
+            try:
+                data, bbox, straight_qrcode = decoder.detectAndDecode(img)
+            except Exception as e:
+                continue
+            if bbox is not None:
                 '''
-                bytes_data = image.getvalue()
-                #save image
-                with open('image.png', 'wb') as f:
-                    f.write(bytes_data)
-                image = cv2.cvtColor(cv2.imread("image.png"), cv2.COLOR_BGR2RGB)
-                data = self.qreader.detect_and_decode(image=image)
+                for i in range(len(bbox)):
+                    cv2.line(img, tuple(bbox[i][0]), tuple(bbox[(i + 1) % len(bbox)][0]), color=(255,
+                                                                                                 0,
+                                                                                                 255),
+                             thickness=2)
+                '''
+                if data:
+                    print("[+] QR Code detected, data:", data)
+                    st.write(data)
+
+                    break
+            #cv2.imshow("img", img)
+            if cv2.waitKey(1) == ord("q"):
+                break
+
+
+    def scan_qr_photo(self):
+        decoder = cv2.QRCodeDetector()
+        image = st.camera_input("Show QR code")
+
+        # Create a QReader instance
+
+
+        #cap = cv2.VideoCapture(0)
+
+        if image is not None:
+
+            bytes_data = image.getvalue()
+            #save image
+            with open('image.png', 'wb') as f:
+                f.write(bytes_data)
+            img = cv2.cvtColor(cv2.imread("image.png"), cv2.COLOR_BGR2RGB)
+            data, bbox, straight_qrcode = decoder.detectAndDecode(img)
                 
-                #cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
-                #detector = cv2.QRCodeDetector()
-                #data, bbox, straight_qrcode = detector.detectAndDecode(cv2_img)
-                '''
-                st.write("Naskenovaná hlídka:")
-                #remove image
+            #cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
+            #detector = cv2.QRCodeDetector()
+            #data, bbox, straight_qrcode = detector.detectAndDecode(cv2_img)
 
+            st.write("Naskenovaná hlídka:")
+            #remove image
 
-                st.write(data)
-                self.write_time(data)
+            st.write(data)
+            self.write_time(data)
 
-                #os.remove("image.png")
+            os.remove("image.png")
     def run_scanner(self):
         placeholder = st.empty()
 
         with placeholder.container():
-            qr_code = self.set_screener()
+            #qr_code = self.scan_qr_code()
+            qr_code = self.scan_qr_photo()
 
         if qr_code is not None:
             print('QR code scanned')
