@@ -1,8 +1,7 @@
-import streamlit as st
-from utils.connector.google_sheet_connector import GoogleSheetConnector
+from google_sheet_connector import GoogleSheetConnector
 from datetime import datetime
 import cv2
-import os, re
+import re
 
 import streamlit as st
 
