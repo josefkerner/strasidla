@@ -1,3 +1,5 @@
+import os
+
 from streamlit_webrtc import webrtc_streamer
 from google_sheet_connector import GoogleSheetConnector
 import cv2
@@ -9,6 +11,15 @@ import av
 decoder = cv2.QRCodeDetector()
 sheet_connector = GoogleSheetConnector()
 from PIL import Image
+from twilio.rest import Client
+
+# Your Account SID from twilio.com/console
+account_sid = os.environ['TWILIO_ACCOUNT_SID']
+# Your Auth Token from twilio.com/console
+auth_token = os.environ['TWILIO_AUTH_TOKEN']
+client = Client(account_sid, auth_token)
+token= client.tokens.create()
+
 
 
 def scan_qr_code(img):
@@ -57,7 +68,7 @@ def video_frame_callback(frame):
 
 
 rtc_configuration={  # Add this config
-        "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+        "iceServers": token.ice_servers
 }
 
 webrtc_streamer(key="example", rtc_configuration=rtc_configuration,
