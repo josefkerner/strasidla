@@ -37,6 +37,8 @@ class QRCodeScanner:
 
         while True:
             _, img = cap.read()
+            if img is None:
+                continue
             data, bbox, _ = decoder.detectAndDecode(img)
             # check if there is a QRCode in the image
             if data:
