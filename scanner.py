@@ -14,10 +14,10 @@ from PIL import Image
 from twilio.rest import Client
 
 # Your Account SID from twilio.com/console
-account_sid = st.secrets['TWILIO_ACCOUNT_SID']
+TWILIO_ACCOUNT_SID = "SK683006229dca5a21e145c4eeb120546f"
+TWILIO_AUTH_TOKEN = "24zhDGp8oAHNNLjQp4UCvyaPOmQb85NL"
 # Your Auth Token from twilio.com/console
-auth_token = st.secrets['TWILIO_AUTH_TOKEN']
-client = Client(account_sid, auth_token)
+client = Client(TWILIO_ACCOUNT_SID,TWILIO_AUTH_TOKEN)
 token= client.tokens.create()
 
 
