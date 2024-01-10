@@ -1,6 +1,4 @@
 qreader
 streamlit
-streamlit-webrtc
 opencv-python-headless
 pygsheets
-twilio
