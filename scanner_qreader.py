@@ -1,5 +1,6 @@
 from google_sheet_connector import GoogleSheetConnector
 from datetime import datetime
+from jke_reader import Qre
 from qreader import QReader
 import re
 import os
