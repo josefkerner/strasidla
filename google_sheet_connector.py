@@ -10,6 +10,8 @@ class GoogleSheetConnector:
     def __init__(self):
         self.sheet_name = 'Sheet1'
         self.gc = pygsheets.authorize()
+        sh = self.gc.open('strasidla')
+        self.wks = sh[0]
 
     def write_time(self, time: str, index: int):
         '''
@@ -18,9 +20,8 @@ class GoogleSheetConnector:
         '''
         df = pd.DataFrame()
         df['time'] = [time]
-        sh = self.gc.open('strasidla')
-        wks = sh[0]
-        wks.update_value(addr=f'B{index+1}', val=time)
+
+        self.wks.update_value(addr=f'B{index+1}', val=time)
 
     def get_records(self,sheet_instance):
         records_data = sheet_instance.get_all_records()
@@ -28,7 +29,3 @@ class GoogleSheetConnector:
         # view the data
         print(records_data)
         return records_data
-
-if __name__ == "__main__":
-    connector = GoogleSheetConnector()
-    connector.write_time('test', 1)
