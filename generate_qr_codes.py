@@ -32,6 +32,7 @@ def write_qr_codes(existing_pdf,i:int, index:int):
     img3 = get_qr_code_img(index)
     index = index + 1
     img4 = get_qr_code_img(index)
+    index = index + 1 #increment index for next page!
 
 
     #0,0 is bottom left corner
