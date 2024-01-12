@@ -31,7 +31,6 @@ class QRCodeScanner:
             current_time = current_time + timedelta(hours=1)
             current_time = current_time.strftime("%H:%M:%S")
 
-            current_time = datetime.now().strftime("%H:%M:%S")
             self.sheet_connector.write_time(current_time, int(index))
             st.write(f"Cas dobehnuti: {current_time}")
         except Exception as e:
