@@ -7,8 +7,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter, A4
 from tqdm import tqdm
 
-indexes = [1,111,221,84]
-#make indexes global
+INDEX = 1
 
 def get_qr_code_img(i:int):
     img = qrcode.make('StrasidlaHlidka:{}'.format(i))
@@ -21,19 +20,19 @@ def get_qr_code_img(i:int):
     return filename
 
 
-def write_qr_codes(existing_pdf, i: int, inds):
+def write_qr_codes(existing_pdf,i:int, index:int):
     packet = io.BytesIO()
-    print(inds)
 
     # do whatever writing you want to do
     can = canvas.Canvas(packet, pagesize=A4)
-    img1 = get_qr_code_img(inds[0])
-    img2 = get_qr_code_img(inds[1])
-    img3 = get_qr_code_img(inds[2])
-    img4 = get_qr_code_img(inds[3])
+    img1 = get_qr_code_img(index)
+    index = index + 1
+    img2 = get_qr_code_img(index)
+    index = index + 1
+    img3 = get_qr_code_img(index)
+    index = index + 1
+    img4 = get_qr_code_img(index)
 
-    #increase every value in INDEXES by 1
-    inds = [x+1 for x in inds]
 
     #0,0 is bottom left corner
 
@@ -54,7 +53,7 @@ def write_qr_codes(existing_pdf, i: int, inds):
     # add the "watermark" (which is the new pdf) on the existing page
     page = existing_pdf.pages[i]
     page.merge_page(new_pdf.pages[0])
-    return page, inds
+    return page, index
 
 
 def write_file():
@@ -95,7 +94,7 @@ def write_text(existing_pdf, i: int, start: str):
 
 
 
-def process_pdf():
+def process_pdf(BASE_INDEX):
     output = PdfWriter()
     ex_file = "startovni_karty.pdf"
     existing_pdf = PdfReader(open(ex_file, "rb"))
@@ -104,9 +103,11 @@ def process_pdf():
     #generatelist from 0 to num_pages
     page_indexes = list(range(num_pages))
     print(num_pages)
-    inds = indexes
+    INDEX = BASE_INDEX
+
     for i in tqdm(page_indexes):
-        page, inds = write_qr_codes(existing_pdf, i,inds)
+        page, ind = write_qr_codes(existing_pdf, i,INDEX)
+        INDEX = ind
         #page = write_text(existing_pdf, i, start="10:00")
         output.add_page(page)
 
@@ -116,5 +117,5 @@ def process_pdf():
     outputStream.close()
 
 #write_file()
-process_pdf()
+process_pdf(BASE_INDEX=INDEX)
 

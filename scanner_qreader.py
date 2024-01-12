@@ -9,7 +9,7 @@ import time
 class QRCodeScanner:
     def __init__(self):
         self.sheet_connector = GoogleSheetConnector()
-        self.qreader = QReader()
+        self.qreader = QReader(model_size='n')
 
     def write_time(self, data):
         try:
